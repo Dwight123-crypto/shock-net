@@ -2,7 +2,7 @@
 <header class="main-header">
 
     <!-- Logo -->
-    <a href="/" class="logo"><b>Shock</b></a>
+    <a href="/" class="logo"><b>Shock Net</b></a>
 
     <!-- Header Navbar -->
     <nav class="navbar navbar-static-top" role="navigation">
