@@ -1,0 +1,58 @@
+@extends('layouts.adminlte')
+@section('body_classes')
+@if(isset($view_name)){{$view_name}}@endif
+@endsection
+
+
+@section('content')
+<div class="content-wrapper">
+
+	<section class="content-header">
+	
+		<h1>
+			%%modelName%% {{ $%%crudNameSingular%%->%%primaryKey%% }}
+		</h1>
+		
+	</section>
+
+	<!-- Main content -->
+	<section class="content">
+
+	<div class="table-responsive">
+		<table class="table table-bordered table-striped table-hover">
+			<tbody>
+				<tr>
+					<th>ID.</th><td>{{ $%%crudNameSingular%%->%%primaryKey%% }}</td>
+				</tr>
+				%%formBodyHtmlForShowView%%
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="2">
+						<a href="{{ url('/%%routeGroup%%%%viewName%%/' . $%%crudNameSingular%%->id . '/edit') }}" class="btn btn-primary btn-xs" title="Edit %%modelName%%"><i class="fa fa-pencil"></i></a>
+						{!! Form::open([
+							'method'=>'DELETE',
+							'url' => ['/%%routeGroup%%%%viewName%%', $%%crudNameSingular%%->id],
+							'style' => 'display:inline'
+						]) !!}
+							{!! Form::button('<i class="fa fa-trash"></i>', array(
+									'type' => 'submit',
+									'class' => 'btn btn-danger btn-xs',
+									'title' => 'Delete %%modelName%%',
+									'onclick'=>'return confirm("Confirm delete?")'
+							)) !!}
+						{!! Form::close() !!}
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+
+	</section><!-- /.content -->
+</div><!-- /.content-wrapper -->
+
+@endsection
+
+
+@section('footer_script_preload')
+@endsection

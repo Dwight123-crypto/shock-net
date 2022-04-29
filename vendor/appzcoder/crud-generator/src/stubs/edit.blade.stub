@@ -1,0 +1,63 @@
+@extends('layouts.adminlte')
+@section('body_classes')
+@if(isset($view_name)){{$view_name}}@endif
+@endsection
+
+
+@section('content')
+<div class="content-wrapper">
+
+	<section class="content-header">
+	
+		@include('_includes.message')
+		
+		<h1>
+			Edit %%modelName%% ({{ $%%crudNameSingular%%->%%primaryKey%% }})
+		</h1>
+	
+	</section>
+
+	<!-- Main content -->
+	<section class="content">
+	
+	{!! Form::model($%%crudNameSingular%%, [
+		'method' => 'PATCH',
+		'url' => ['/%%routeGroup%%%%viewName%%', $%%crudNameSingular%%->%%primaryKey%%],
+		'class' => ''
+	]) !!}
+
+	<div class="box">
+		<div class="box-header with-border">
+			<h3 class="box-title">Options</h3>
+			<div class="box-tools pull-right">
+				<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+			</div>
+		</div>
+		<div class="box-body">
+			<div class="row">
+			
+	%%formFieldsHtml%%
+				
+			</div>
+			<!-- /.row -->
+		</div>
+		<!-- ./box-body -->
+	</div>
+
+	<div class="row">
+	  <div class="col-sm-3">
+		<div class="form-group">
+			{!! Form::submit('Update', ['class' => 'btn btn-primary form-control']) !!}
+		</div>
+	  </div>
+	</div>
+	{!! Form::close() !!}
+
+	</section><!-- /.content -->
+</div><!-- /.content-wrapper -->
+
+@endsection
+
+
+@section('footer_script_preload')
+@endsection
