@@ -1,4 +1,4 @@
-AddHandler application/x-httpd-php56 .php
+# AddHandler application/x-httpd-php56 .php
 <IfModule mod_rewrite.c>
   RewriteEngine On 
   RewriteRule ^(.*)$ public/$1 [L]

