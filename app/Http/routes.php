@@ -168,6 +168,8 @@ Route::group(['middlewareGroups'=>['web', 'auth']], function() {
 
     Route::get('customer/get-open-invoices', 'CustomerCRUDController@getOpenInvoices');
 
+    Route::get('customer/search-customer', 'CustomerCRUDController@searchCustomer');
+
     Route::resource('customer','CustomerCRUDController');
 
 
@@ -268,7 +270,8 @@ Route::group(['middlewareGroups'=>['web', 'auth']], function() {
 
     Route::get('user/access-token', 'UserController@getAccessToken');
     Route::resource('user', 'UserController');
-
+    
+    Route::get('vendors/search-vendors', 'VendorController@searchVendors');
     Route::get('vendors/get-supplier-invoices', 'VendorController@getSupplierInvoices');
     Route::resource('vendors', 'VendorController');
     Route::get('voucher/get-date-range', 'ChartAccountController@getSales');

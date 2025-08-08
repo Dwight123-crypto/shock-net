@@ -75,13 +75,13 @@ class CMSProject extends Model
                 ->groupBy(DB::raw('DATE_FORMAT(v.date, "%b")'))
                 ->get();
 
-        $cms_expense = DB::table('c_m_s_expenses')
+        /*$cms_expense = DB::table('c_m_s_expenses')
                 ->select(DB::raw('DATE_FORMAT(date, "%b") as month'), 
                         DB::raw('IFNULL(SUM(amount), 0) as cms_expense'))
                 ->whereBetween('date',[$firstDayofYear, $thisDay])
                 ->orderBy('date', 'asc')
                 ->groupBy(DB::raw('DATE_FORMAT(date, "%b")'))
-                ->get();
+                ->get();*/
 
         $taxes = DB::table('chart_accounts as ca')
                 ->join('vouchers as v', 'ca.id','=','v.chart_account_id')

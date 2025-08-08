@@ -333,63 +333,69 @@ class ChartAccount extends Model
     }
 
     public static function sales() {
-        // $firstDayofYear = new Carbon\Carbon('first day of January');
-        // $thisDay = Carbon\Carbon::now();
 
-        $firstDayofYear = Carbon\Carbon::parse('01/01/2018')->format('Y-m-d h:m:s');
-        $thisDay = Carbon\Carbon::parse('04/03/2018')->format('Y-m-d h:m:s');
+        $firstDayofYear = new Carbon\Carbon('first day of January');
+        $thisDay = Carbon\Carbon::now();
+
+        $firstDayofYear = date('Y-m-d', strtotime($firstDayofYear));
+        $thisDay = date('Y-m-d', strtotime($thisDay));
+        // dd($firstDayofYear);
+
+        // $firstDayofYear = Carbon\Carbon::parse('01/01/2018')->format('Y-m-d h:m:s');
+        // $thisDay = Carbon\Carbon::parse('04/03/2018')->format('Y-m-d h:m:s');
 
         $month = array('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec');
         $charts = $sale_arr = $cost_arr = $expense_arr = $tax_arr = array();
         $s=$c=$e=$t = 0;
         $dateFrom = date('n', strtotime($firstDayofYear));
         $dateTo = date('n', strtotime($thisDay));
-        //dd($dateTo);
 
         $sales = DB::table('vouchers')
-                ->select(DB::raw('DATE_FORMAT(created_at, "%b") as month'), 
-                DB::raw('IFNULL(SUM(credit), 0) as current_balance'
+                ->select(DB::raw('DATE_FORMAT(date, "%b") as month'), 
+                DB::raw('IFNULL(SUM(credit), 0) as current_balance')
                 )
-                )
-                ->where('chart_account_id','=','73')
+                // ->where('chart_account_id','=','12')
+                ->where('chart_account_id', 12)
                 ->whereRaw('(credit)!=0')
-                ->whereBetween('created_at',[$firstDayofYear, $thisDay])
-                ->orderBy('created_at', 'asc')
-                //->groupBy(DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d")'))
-                ->groupBy(DB::raw('DATE_FORMAT(created_at, "%b")'))
+                ->whereBetween('date',[$firstDayofYear, $thisDay])
+                ->orderBy('date', 'asc')
+                ->groupBy(DB::raw('DATE_FORMAT(date, "%b")'))
                 ->get();
-        
-        $costs = DB::table('chart_accounts as ca')
-                ->join('vouchers as v', 'ca.id','=','v.chart_account_id')
-                ->select(DB::raw('DATE_FORMAT(v.created_at, "%b") as month'),
-                        DB::raw('IFNULL(SUM(debit-credit), 0) as current_balance'))
-                ->whereBetween('v.created_at',[$firstDayofYear, $thisDay])
-                ->where(function($q) {
-                    $q->where('ca.sub_account_type_id', 7)
-                      ->orWhere('ca.sub_account_type_id', 8);
-                })
-                ->orderBy('v.created_at', 'asc')
-                ->groupBy(DB::raw('DATE_FORMAT(v.created_at, "%b")'))
-                ->get();
-        
+
+                // dd($sales);
+
+        // $costs = DB::table('chart_accounts as ca')
+        //         ->join('vouchers as v', 'ca.id','=','v.chart_account_id')
+        //         ->select(DB::raw('DATE_FORMAT(v.created_at, "%b") as month'),
+        //                 DB::raw('IFNULL(SUM(debit-credit), 0) as current_balance'))
+        //         ->whereBetween('v.created_at',[$firstDayofYear, $thisDay])
+        //         ->where(function($q) {
+        //             $q->where('ca.sub_account_type_id', 7)
+        //               ->orWhere('ca.sub_account_type_id', 8);
+        //         })
+        //         ->orderBy('v.created_at', 'asc')
+        //         ->groupBy(DB::raw('DATE_FORMAT(v.created_at, "%b")'))
+        //         ->get();
+
         $expenses = DB::table('chart_accounts as ca')
                 ->join('vouchers as v', 'ca.id','=','v.chart_account_id')
-                ->select(DB::raw('DATE_FORMAT(v.created_at, "%b") as month'),
+                ->select(DB::raw('DATE_FORMAT(v.date, "%b") as month'),
                         DB::raw('IFNULL(SUM(debit-credit), 0) as current_balance'))
-                ->whereBetween('v.created_at',[$firstDayofYear, $thisDay])
-                ->where('account_type_id','=',9)
-                ->orderBy('v.created_at', 'asc')
-                ->groupBy(DB::raw('DATE_FORMAT(v.created_at, "%b")'))
+                ->whereBetween('v.date',[$firstDayofYear, $thisDay])
+                ->where('account_type_id','=', 9)
+                ->orderBy('v.date', 'asc')
+                ->groupBy(DB::raw('DATE_FORMAT(v.date, "%b")'))
                 ->get();
         
         $taxes = DB::table('chart_accounts as ca')
                 ->join('vouchers as v', 'ca.id','=','v.chart_account_id')
-                ->select(DB::raw('DATE_FORMAT(v.created_at, "%b") as month'),
+                ->select(DB::raw('DATE_FORMAT(v.date, "%b") as month'),
                         DB::raw('IFNULL(SUM(debit-credit), 0) as current_balance'))
-                ->whereBetween('v.created_at',[$firstDayofYear, $thisDay])
+                ->whereBetween('v.date',[$firstDayofYear, $thisDay])
                 ->where('v.tax_id','>',0)
-                ->orderBy('v.created_at', 'asc')
-                ->groupBy(DB::raw('DATE_FORMAT(v.created_at, "%b")'))
+                ->where('v.key' , '=' ,'tax_debit')
+                ->orderBy('v.date', 'asc')
+                ->groupBy(DB::raw('DATE_FORMAT(v.date, "%b")'))
                 ->get();
                 
         for($i=$dateFrom-1;$i<$dateTo;$i++){
@@ -405,16 +411,16 @@ class ChartAccount extends Model
                 $sale_arr[] = 0;
             }
             
-            if(!empty($costs)) {
-                if($c<count($costs) && $month[$i]==$costs[$c]->month) {
-                    $cost_arr[] = $cost[$c]->current_balance;
-                    $c++;
-                }else {
-                    $cost_arr[] = 0;
-                }
-            }else {
-                $cost_arr[] = 0;
-            }
+            // if(!empty($costs)) {
+            //     if($c<count($costs) && $month[$i]==$costs[$c]->month) {
+            //         $cost_arr[] = $costs[$c]->current_balance;
+            //         $c++;
+            //     }else {
+            //         $cost_arr[] = 0;
+            //     }
+            // }else {
+            //     $cost_arr[] = 0;
+            // }
             
             if(!empty($expenses)) {
                 if($e<count($expenses) && $month[$i]==$expenses[$e]->month) {
@@ -441,7 +447,7 @@ class ChartAccount extends Model
         
         return $charts[] = (object) [
             'sales' => $sale_arr,
-            'costs' => $cost_arr,
+            // 'costs' => $cost_arr,
             'expenses' => $expense_arr,
             'taxes' => $tax_arr,
         ];
